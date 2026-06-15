@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Dashboard from './components/Dashboard';
 import Scanner from './components/Scanner';
+import Budgets from './components/Budgets';
+import Reminders from './components/Reminders';
+import SplitBills from './components/SplitBills';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 const DEFAULT_USER_ID = 1;
@@ -138,17 +141,23 @@ function App() {
 
         {/* Tab Selection */}
         <nav className="hidden md:flex items-center gap-2 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
-          {['dashboard', 'scanner'].map((tab) => (
+          {[
+            { id: 'dashboard', label: '📊 Dashboard' },
+            { id: 'scanner', label: '📷 AI Scanner' },
+            { id: 'budgets', label: '💰 Budgets' },
+            { id: 'reminders', label: '🔔 Reminders' },
+            { id: 'splitbills', label: '👥 Split Bills' }
+          ].map((tab) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all capitalize ${
-                activeTab === tab 
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
+                activeTab === tab.id 
                   ? 'bg-gradient-to-r from-violet-600 to-cyan-600 text-white shadow-md' 
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
-              {tab === 'scanner' ? '📷 AI Scanner' : '📊 Dashboard'}
+              {tab.label}
             </button>
           ))}
         </nav>
@@ -179,18 +188,24 @@ function App() {
       )}
 
       {/* Mobile Nav Header */}
-      <div className="flex md:hidden justify-center gap-2 px-4 mb-2">
-        {['dashboard', 'scanner'].map((tab) => (
+      <div className="flex md:hidden flex-wrap justify-center gap-2 px-4 mb-2">
+        {[
+          { id: 'dashboard', label: '📊 Dashboard' },
+          { id: 'scanner', label: '📷 Scanner' },
+          { id: 'budgets', label: '💰 Budgets' },
+          { id: 'reminders', label: '🔔 Reminders' },
+          { id: 'splitbills', label: '👥 Split' }
+        ].map((tab) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex-1 py-2.5 rounded-xl font-medium text-xs text-center transition-all capitalize ${
-              activeTab === tab 
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 py-2.5 rounded-xl font-medium text-[10px] text-center transition-all min-w-[70px] ${
+              activeTab === tab.id 
                 ? 'bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-bold' 
                 : 'bg-slate-900/60 border border-slate-800 text-slate-400'
             }`}
           >
-            {tab === 'scanner' ? '📷 AI Scanner' : '📊 Dashboard'}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -214,8 +229,31 @@ function App() {
             fetchInitialData={fetchInitialData}
             addNotification={addNotification}
           />
-        ) : (
+        ) : activeTab === 'scanner' ? (
           <Scanner 
+            userId={userId}
+            fetchInitialData={fetchInitialData}
+            addNotification={addNotification}
+          />
+        ) : activeTab === 'budgets' ? (
+          <Budgets
+            budgets={budgets}
+            userId={userId}
+            fetchInitialData={fetchInitialData}
+            addNotification={addNotification}
+          />
+        ) : activeTab === 'reminders' ? (
+          <Reminders
+            subscriptions={subscriptions}
+            upcomingReminders={upcomingReminders}
+            userId={userId}
+            fetchInitialData={fetchInitialData}
+            addNotification={addNotification}
+          />
+        ) : (
+          <SplitBills
+            groupMembers={groupMembers}
+            ledgerBalances={ledgerBalances}
             userId={userId}
             fetchInitialData={fetchInitialData}
             addNotification={addNotification}
