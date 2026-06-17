@@ -5,6 +5,7 @@ import Scanner from './components/Scanner';
 import Budgets from './components/Budgets';
 import Reminders from './components/Reminders';
 import SplitBills from './components/SplitBills';
+import Reports from './components/Reports';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 const DEFAULT_USER_ID = 1;
@@ -146,7 +147,8 @@ function App() {
             { id: 'scanner', label: '📷 AI Scanner' },
             { id: 'budgets', label: '💰 Budgets' },
             { id: 'reminders', label: '🔔 Reminders' },
-            { id: 'splitbills', label: '👥 Split Bills' }
+            { id: 'splitbills', label: '👥 Split Bills' },
+            { id: 'reports', label: '📑 Reports' }
           ].map((tab) => (
             <button
               key={tab.id}
@@ -194,7 +196,8 @@ function App() {
           { id: 'scanner', label: '📷 Scanner' },
           { id: 'budgets', label: '💰 Budgets' },
           { id: 'reminders', label: '🔔 Reminders' },
-          { id: 'splitbills', label: '👥 Split' }
+          { id: 'splitbills', label: '👥 Split' },
+          { id: 'reports', label: '📑 Reports' }
         ].map((tab) => (
           <button
             key={tab.id}
@@ -250,12 +253,18 @@ function App() {
             fetchInitialData={fetchInitialData}
             addNotification={addNotification}
           />
-        ) : (
+        ) : activeTab === 'splitbills' ? (
           <SplitBills
             groupMembers={groupMembers}
             ledgerBalances={ledgerBalances}
             userId={userId}
             fetchInitialData={fetchInitialData}
+            addNotification={addNotification}
+          />
+        ) : (
+          <Reports
+            userId={userId}
+            expenses={expenses}
             addNotification={addNotification}
           />
         )}
