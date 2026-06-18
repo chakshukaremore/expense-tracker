@@ -9,6 +9,7 @@ import com.fintrack.expense_tracker.repository.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class ExpenseService {
@@ -62,5 +63,9 @@ public class ExpenseService {
         budgetRepository.save(budget);
 
         return new ExpenseResponseDTO(isOverBudget, alertMessage, projectedSpent, savedExpense);
+    }
+
+    public List<Expense> getExpensesByUserId(Long userId) {
+        return expenseRepository.findByUserIdOrderByDateDesc(userId);
     }
 }

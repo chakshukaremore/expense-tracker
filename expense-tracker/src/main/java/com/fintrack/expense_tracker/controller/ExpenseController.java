@@ -2,6 +2,7 @@ package com.fintrack.expense_tracker.controller;
 
 import com.fintrack.expense_tracker.dto.ExtractedBillDTO;
 import com.fintrack.expense_tracker.dto.ExpenseResponseDTO;
+import com.fintrack.expense_tracker.model.Expense;
 import com.fintrack.expense_tracker.service.ExpenseService;
 import com.fintrack.expense_tracker.service.GeminiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/expenses")
@@ -21,6 +23,11 @@ public class ExpenseController {
 
     @Autowired
     private GeminiService geminiService;
+
+    @GetMapping
+    public ResponseEntity<List<Expense>> getExpenses(@RequestParam Long userId) {
+        return ResponseEntity.ok(expenseService.getExpensesByUserId(userId));
+    }
 
     // 📷 Endpoint 1: Real Receipt Scanner (Gemini API Integration)
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

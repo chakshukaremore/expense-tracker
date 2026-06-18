@@ -32,11 +32,14 @@ function App() {
   const fetchInitialData = async () => {
     setLoading(true);
     try {
-      // 1. Fetch Expenses (Mock fallback if failed)
+      // 1. Fetch Expenses from Database
       try {
-        const expRes = await axios.get(`${API_BASE_URL}/reports/excel?userId=${userId}`); // Just to test api connectivity, or custom endpoint
-        // Since we don't have list endpoint, let's load mock or get from server reports
-        setExpenses(getMockExpenses());
+        const expRes = await axios.get(`${API_BASE_URL}/expenses?userId=${userId}`);
+        if (expRes.data && expRes.data.length > 0) {
+          setExpenses(expRes.data);
+        } else {
+          setExpenses(getMockExpenses());
+        }
       } catch (err) {
         setExpenses(getMockExpenses());
       }

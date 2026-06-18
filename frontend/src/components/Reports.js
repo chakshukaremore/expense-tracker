@@ -6,7 +6,7 @@ const API_BASE_URL = 'http://localhost:8080/api';
 function Reports({ userId, expenses, addNotification }) {
   const [filterCategory, setFilterCategory] = useState('All');
   const [downloadingPdf, setDownloadingPdf] = useState(false);
-  const [downloadingExcel, setDownloadingExcel] = useState(false);
+  const [downloadingCsv, setDownloadingCsv] = useState(false);
 
   // Filter local preview transaction logs
   const filteredExpenses = filterCategory === 'All' 
@@ -45,14 +45,14 @@ function Reports({ userId, expenses, addNotification }) {
     }
   };
 
-  // Download Excel Report
-  const handleDownloadExcel = async () => {
-    setDownloadingExcel(true);
+  // Download CSV Report
+  const handleDownloadCsv = async () => {
+    setDownloadingCsv(true);
     try {
-      addNotification("Compiling Excel workbook sheets...", "info");
+      addNotification("Compiling CSV transaction ledger...", "info");
       
       const response = await axios({
-        url: `${API_BASE_URL}/reports/excel?userId=${userId}`,
+        url: `${API_BASE_URL}/reports/csv?userId=${userId}`,
         method: 'GET',
         responseType: 'blob', // Important: receives binary data
       });
@@ -61,19 +61,19 @@ function Reports({ userId, expenses, addNotification }) {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Vesta_Expense_Report_${new Date().toISOString().split('T')[0]}.xlsx`);
+      link.setAttribute('download', `Vesta_Expense_Report_${new Date().toISOString().split('T')[0]}.csv`);
       document.body.appendChild(link);
       link.click();
       
       // Clean up
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      addNotification("Excel report downloaded successfully!", "success");
+      addNotification("CSV statement downloaded successfully!", "success");
     } catch (err) {
       console.error(err);
-      addNotification("Spring Boot offline: Excel download failed.", "error");
+      addNotification("Spring Boot offline: CSV compilation failed.", "error");
     } finally {
-      setDownloadingExcel(false);
+      setDownloadingCsv(false);
     }
   };
 
@@ -106,18 +106,18 @@ function Reports({ userId, expenses, addNotification }) {
         <div className="flex flex-col gap-3">
           <button
             onClick={handleDownloadPdf}
-            disabled={downloadingPdf || downloadingExcel}
+            disabled={downloadingPdf || downloadingCsv}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 disabled:from-slate-800 disabled:to-slate-900 disabled:text-slate-500 text-white font-semibold text-sm tracking-wider shadow-lg flex items-center justify-center gap-2"
           >
             {downloadingPdf ? 'Compiling PDF...' : '📄 Download PDF Statement'}
           </button>
 
           <button
-            onClick={handleDownloadExcel}
-            disabled={downloadingPdf || downloadingExcel}
+            onClick={handleDownloadCsv}
+            disabled={downloadingPdf || downloadingCsv}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 disabled:from-slate-800 disabled:to-slate-900 disabled:text-slate-500 text-white font-semibold text-sm tracking-wider shadow-lg flex items-center justify-center gap-2"
           >
-            {downloadingExcel ? 'Compiling Excel...' : '📊 Download Excel Sheets'}
+            {downloadingCsv ? 'Compiling CSV...' : '📊 Download CSV Statement'}
           </button>
         </div>
       </div>
