@@ -7,9 +7,9 @@
     --text-muted: #5e6b8c;
     
     /* Harmonious gradients & branding colors */
-    --primary: #8b5cf6;
-    --primary-glow: rgba(139, 92, 246, 0.45);
-    --secondary: #ec4899;
+    --primary: #ff8b73;
+    --primary-glow: rgba(255, 139, 115, 0.35);
+    --secondary: #f0a07e;
     
     --success: #10b981;
     --success-bg: rgba(16, 185, 129, 0.15);
@@ -43,8 +43,8 @@ body {
     line-height: 1.6;
     overflow-x: hidden;
     background-image: 
-        radial-gradient(at 10% 10%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-        radial-gradient(at 90% 90%, rgba(236, 72, 153, 0.08) 0px, transparent 50%);
+        radial-gradient(at 10% 10%, rgba(255, 139, 115, 0.12) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(240, 160, 126, 0.08) 0px, transparent 50%);
 }
 
 /* Base App Layout */
