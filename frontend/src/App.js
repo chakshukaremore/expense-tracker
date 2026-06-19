@@ -23,6 +23,7 @@ function App() {
   const [ledgerBalances, setLedgerBalances] = useState({});
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [analytics, setAnalytics] = useState(null);
 
   // Sync API or fallback to mock
   useEffect(() => {
@@ -76,6 +77,20 @@ function App() {
       } catch (err) {
         setGroupMembers(getMockFriends());
         setLedgerBalances(getMockBalances());
+      }
+
+      // 5. Fetch Analytics
+      try {
+        const anaRes = await axios.get(`${API_BASE_URL}/expenses/mom-analytics?userId=${userId}`);
+        setAnalytics(anaRes.data);
+      } catch (err) {
+        setAnalytics({
+          currentMonthTotal: 7799.0,
+          prevMonthTotal: 7000.0,
+          percentageChange: 11.41,
+          highestCategoryChange: "Shopping",
+          trend: "INCREASED"
+        });
       }
 
     } catch (e) {
@@ -231,6 +246,7 @@ function App() {
             upcomingReminders={upcomingReminders}
             ledgerBalances={ledgerBalances}
             groupMembers={groupMembers}
+            analytics={analytics}
             userId={userId}
             fetchInitialData={fetchInitialData}
             addNotification={addNotification}

@@ -2,6 +2,7 @@ package com.fintrack.expense_tracker.controller;
 
 import com.fintrack.expense_tracker.dto.ExtractedBillDTO;
 import com.fintrack.expense_tracker.dto.ExpenseResponseDTO;
+import com.fintrack.expense_tracker.dto.AnalyticsResponseDTO;
 import com.fintrack.expense_tracker.model.Expense;
 import com.fintrack.expense_tracker.service.ExpenseService;
 import com.fintrack.expense_tracker.service.GeminiService;
@@ -27,6 +28,11 @@ public class ExpenseController {
     @GetMapping
     public ResponseEntity<List<Expense>> getExpenses(@RequestParam Long userId) {
         return ResponseEntity.ok(expenseService.getExpensesByUserId(userId));
+    }
+
+    @GetMapping("/mom-analytics")
+    public ResponseEntity<AnalyticsResponseDTO> getMoMAnalytics(@RequestParam Long userId) {
+        return ResponseEntity.ok(expenseService.getMonthOverMonthAnalytics(userId));
     }
 
     // 📷 Endpoint 1: Real Receipt Scanner (Gemini API Integration)

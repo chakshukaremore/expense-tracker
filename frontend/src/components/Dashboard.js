@@ -9,6 +9,7 @@ function Dashboard({
   budgets, 
   upcomingReminders, 
   ledgerBalances,
+  analytics,
   addNotification 
 }) {
   
@@ -62,7 +63,7 @@ function Dashboard({
     <div className="flex flex-col gap-6">
       
       {/* 🚀 Top Row: Premium Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Total Spent */}
         <div className="glass-panel p-6 relative overflow-hidden flex flex-col justify-between min-h-[140px]">
           <div className="absolute top-0 right-0 w-24 h-24 bg-violet-600/10 rounded-full blur-2xl"></div>
@@ -73,6 +74,33 @@ function Dashboard({
             </h2>
           </div>
           <p className="text-[11px] text-slate-400 mt-4">Across all configured categories</p>
+        </div>
+
+        {/* MoM Growth Analytics */}
+        <div className="glass-panel p-6 relative overflow-hidden flex flex-col justify-between min-h-[140px]">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-600/10 rounded-full blur-2xl"></div>
+          <div>
+            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">MoM Spending Growth</span>
+            {analytics ? (
+              <div className="flex items-baseline gap-2 mt-2">
+                <h2 className={`text-3xl font-extrabold ${
+                  analytics.trend === 'INCREASED' ? 'text-rose-400' :
+                  analytics.trend === 'DECREASED' ? 'text-emerald-400' :
+                  'text-slate-300'
+                }`}>
+                  {analytics.trend === 'INCREASED' ? '+' : ''}{analytics.percentageChange}%
+                </h2>
+                <span className="text-[10px] text-slate-400 font-medium">vs last month</span>
+              </div>
+            ) : (
+              <h2 className="text-xl font-extrabold text-slate-400 mt-2">No Data</h2>
+            )}
+          </div>
+          <p className="text-[11px] text-slate-400 mt-4">
+            {analytics && analytics.highestCategoryChange && analytics.highestCategoryChange !== 'None'
+              ? `Peak Share: ${analytics.highestCategoryChange}` 
+              : 'Analyzing spending trends...'}
+          </p>
         </div>
 
         {/* You Are Owed */}
