@@ -1,28 +1,28 @@
 :root {
-    --bg-dark: #0f111a;
-    --card-bg: rgba(30, 34, 54, 0.45);
-    --card-border: rgba(255, 255, 255, 0.08);
-    --text-primary: #f1f3f9;
-    --text-secondary: #8b9bb4;
-    --text-muted: #5e6b8c;
+    --bg-dark: #faf8f5; /* Solid warm off-white background */
+    --card-bg: #ffffff; /* Pure white card background */
+    --card-border: rgba(217, 119, 6, 0.12); /* Soft gold/amber borders */
+    --text-primary: #1c1917; /* Dark warm charcoal */
+    --text-secondary: #57534e; /* Warm grey/slate */
+    --text-muted: #a8a29e; /* Muted stone grey */
     
     /* Harmonious gradients & branding colors */
-    --primary: #ff8b73;
-    --primary-glow: rgba(255, 139, 115, 0.35);
-    --secondary: #f0a07e;
+    --primary: #d97706; /* Solid warm amber yellow */
+    --primary-glow: rgba(217, 119, 6, 0.15);
+    --secondary: #eab308; /* Bright gold yellow */
     
-    --success: #10b981;
-    --success-bg: rgba(16, 185, 129, 0.15);
+    --success: #059669;
+    --success-bg: rgba(5, 150, 105, 0.08);
     
-    --warning: #f59e0b;
-    --warning-bg: rgba(245, 158, 11, 0.15);
+    --warning: #d97706;
+    --warning-bg: rgba(217, 119, 6, 0.08);
     
-    --error: #ef4444;
-    --error-bg: rgba(239, 68, 68, 0.18);
-    --error-glow: rgba(239, 68, 68, 0.4);
+    --error: #dc2626;
+    --error-bg: rgba(220, 38, 38, 0.08);
+    --error-glow: rgba(220, 38, 38, 0.15);
     
-    --info: #3b82f6;
-    --info-bg: rgba(59, 130, 246, 0.15);
+    --info: #2563eb;
+    --info-bg: rgba(37, 99, 235, 0.08);
     
     --font-heading: 'Outfit', sans-serif;
     --font-body: 'Plus Jakarta Sans', sans-serif;
@@ -42,9 +42,7 @@ body {
     font-size: 14px;
     line-height: 1.6;
     overflow-x: hidden;
-    background-image: 
-        radial-gradient(at 10% 10%, rgba(255, 139, 115, 0.12) 0px, transparent 50%),
-        radial-gradient(at 90% 90%, rgba(240, 160, 126, 0.08) 0px, transparent 50%);
+    background-image: none; /* Flat solid background */
 }
 
 /* Base App Layout */
@@ -56,8 +54,8 @@ body {
 /* Sidebar Styling */
 .sidebar {
     width: 260px;
-    background: rgba(15, 17, 26, 0.85);
-    backdrop-filter: blur(16px);
+    background: #f2efe9; /* Flat warm sand beige sidebar */
+    backdrop-filter: none;
     border-right: 1px solid var(--card-border);
     display: flex;
     flex-direction: column;
@@ -126,7 +124,7 @@ body {
 
 .nav-item:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.04);
+    background: rgba(217, 119, 6, 0.06); /* Soft amber hover */
 }
 
 .nav-item:hover i {
@@ -135,8 +133,8 @@ body {
 
 .nav-item.active {
     color: white;
-    background: linear-gradient(135deg, var(--primary), rgba(139, 92, 246, 0.4));
-    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.25);
+    background: linear-gradient(135deg, var(--primary), rgba(234, 179, 8, 0.8));
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -214,13 +212,13 @@ body {
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.25);
+    box-shadow: 0 4px 15px rgba(217, 119, 6, 0.2);
     transition: all var(--transition-speed) ease;
 }
 
 .quick-scanner-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(236, 72, 153, 0.35);
+    box-shadow: 0 6px 20px rgba(217, 119, 6, 0.3);
 }
 
 .notification-bell {
@@ -238,7 +236,7 @@ body {
 }
 
 .notification-bell:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(217, 119, 6, 0.06);
 }
 
 .notification-bell i {
@@ -325,7 +323,6 @@ body {
 
 .stat-card {
     background: var(--card-bg);
-    backdrop-filter: blur(12px);
     border: 1px solid var(--card-border);
     border-radius: 16px;
     padding: 24px;
@@ -333,6 +330,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     min-height: 140px;
+    box-shadow: 0 4px 20px rgba(217, 119, 6, 0.05); /* Soft drop shadow */
 }
 
 .stat-card-header {
@@ -380,7 +378,7 @@ body {
 .text-danger { color: var(--error); }
 
 .progress-bar-small {
-    background: rgba(255, 255, 255, 0.08);
+    background: #e5e5e5; /* Light grey progress bar track */
     height: 6px;
     border-radius: 3px;
     margin: 8px 0;
@@ -403,12 +401,12 @@ body {
 
 .dashboard-card {
     background: var(--card-bg);
-    backdrop-filter: blur(12px);
     border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 28px;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 6px 24px rgba(217, 119, 6, 0.04);
 }
 
 .card-header {
