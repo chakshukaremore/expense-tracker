@@ -15,7 +15,82 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
+    <!-- Authentication Screen -->
+    <div id="auth-screen" class="auth-container">
+        <!-- Login Card -->
+        <div id="login-card" class="auth-card">
+            <div class="auth-header">
+                <h1>Vesta <span>AI</span></h1>
+                <p>Smart Finance Engine</p>
+            </div>
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="login-email" placeholder="enter email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="enter password" required>
+                </div>
+                <a href="#" id="forgot-password-link" class="forgot-link">Forgot Password?</a>
+                <button type="submit" class="auth-btn">Sign In</button>
+            </form>
+            <div class="auth-divider">or</div>
+            <button id="google-login-btn" class="google-btn">
+                <i class="fa-brands fa-google"></i> Continue with Google
+            </button>
+            <div class="auth-footer">
+                Don't have an account? <span id="to-register-link">Register</span>
+            </div>
+        </div>
+
+        <!-- Register Card -->
+        <div id="register-card" class="auth-card" style="display: none;">
+            <div class="auth-header">
+                <h1>Vesta <span>AI</span></h1>
+                <p>Create Account</p>
+            </div>
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="register-name" placeholder="enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="register-email" placeholder="enter email" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="register-password" placeholder="enter password" required>
+                </div>
+                <button type="submit" class="auth-btn">Create Account</button>
+            </form>
+            <div class="auth-footer">
+                Already have an account? <span id="to-login-link">Login</span>
+            </div>
+        </div>
+
+        <!-- Forgot Password Card -->
+        <div id="forgot-card" class="auth-card" style="display: none;">
+            <div class="auth-header">
+                <h1>Vesta <span>AI</span></h1>
+                <p>Reset Password</p>
+            </div>
+            <form id="forgot-form" class="auth-form">
+                <p style="font-size: 0.82rem; color: var(--text-secondary); text-align: center; margin-bottom: 5px;">Enter your registered email address to receive a recovery link.</p>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="forgot-email" placeholder="enter email" required>
+                </div>
+                <button type="submit" class="auth-btn">Send Recovery Link</button>
+            </form>
+            <div class="auth-footer">
+                Back to <span id="back-to-login-link">Login</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container" style="display: none;">
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
             <div class="logo">
@@ -52,14 +127,17 @@
                 </a>
             </nav>
             
-            <div class="user-profile">
+            <div class="user-profile" style="position: relative;">
                 <div class="profile-avatar">
-                    <span>JD</span>
+                    <span id="profile-initials">JD</span>
                 </div>
                 <div class="profile-info">
-                    <h4>John Doe</h4>
-                    <p>Premium User</p>
+                    <h4 id="profile-name">John Doe</h4>
+                    <p id="profile-desc">Premium User</p>
                 </div>
+                <button id="logout-btn" style="background: none; border: none; color: var(--text-muted); cursor: pointer; margin-left: auto; font-size: 1.1rem; padding: 5px;" title="Logout">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
             </div>
         </aside>
 

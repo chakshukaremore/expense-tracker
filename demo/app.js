@@ -37,6 +37,9 @@ let categoryChartInstance = null;
 
 // Initialize app when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
+    // Auth setup
+    setupAuth();
+    
     // Navigation setup
     setupNavigation();
     
@@ -1110,4 +1113,123 @@ function openAddFriendModal() {
 
 function closeModal(id) {
     document.getElementById(id).classList.add("hidden");
+}
+
+// ==========================================================================
+// AUTHENTICATION LOGIC & SCREEN OVERLAY
+// ==========================================================================
+let isLoggedIn = localStorage.getItem("vesta_logged_in") === "true";
+
+function setupAuth() {
+    // Check initial state
+    if (isLoggedIn) {
+        document.getElementById("auth-screen").style.display = "none";
+        document.querySelector(".app-container").style.display = "flex";
+        // Load details from storage
+        const savedName = localStorage.getItem("vesta_user_name") || "John Doe";
+        const savedEmail = localStorage.getItem("vesta_user_email") || "user@vesta.ai";
+        updateUserProfile(savedName, savedEmail);
+    } else {
+        document.getElementById("auth-screen").style.display = "flex";
+        document.querySelector(".app-container").style.display = "none";
+    }
+
+    // Toggle forms
+    document.getElementById("to-register-link").addEventListener("click", () => {
+        document.getElementById("login-card").style.display = "none";
+        document.getElementById("register-card").style.display = "flex";
+    });
+
+    document.getElementById("to-login-link").addEventListener("click", () => {
+        document.getElementById("register-card").style.display = "none";
+        document.getElementById("login-card").style.display = "flex";
+    });
+
+    document.getElementById("forgot-password-link").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.getElementById("login-card").style.display = "none";
+        document.getElementById("forgot-card").style.display = "flex";
+    });
+
+    document.getElementById("back-to-login-link").addEventListener("click", () => {
+        document.getElementById("forgot-card").style.display = "none";
+        document.getElementById("login-card").style.display = "flex";
+    });
+
+    // Form Submit Handlers
+    document.getElementById("login-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+        
+        if (email && password) {
+            const name = email.split('@')[0];
+            const formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+            loginUser(formattedName, email);
+            triggerNotification('soft', `Welcome back, ${formattedName}!`, 'Auth');
+        }
+    });
+
+    document.getElementById("register-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = document.getElementById("register-name").value;
+        const email = document.getElementById("register-email").value;
+        
+        triggerNotification('soft', "Account created! Please sign in.", 'Auth');
+        document.getElementById("register-card").style.display = "none";
+        document.getElementById("login-card").style.display = "flex";
+    });
+
+    document.getElementById("forgot-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("forgot-email").value;
+        triggerNotification('soft', `Password reset recovery link sent to ${email}`, 'Auth');
+        document.getElementById("forgot-card").style.display = "none";
+        document.getElementById("login-card").style.display = "flex";
+    });
+
+    // Google Sign in simulation
+    document.getElementById("google-login-btn").addEventListener("click", () => {
+        loginUser("Chakshu Karemore", "chakshu@gmail.com");
+        triggerNotification('soft', "Successfully signed in with Google Account!", 'Auth');
+    });
+
+    // Logout Action
+    document.getElementById("logout-btn").addEventListener("click", () => {
+        logoutUser();
+        triggerNotification('soft', "Logged out successfully.", 'Auth');
+    });
+}
+
+function loginUser(name, email) {
+    isLoggedIn = true;
+    localStorage.setItem("vesta_logged_in", "true");
+    localStorage.setItem("vesta_user_name", name);
+    localStorage.setItem("vesta_user_email", email);
+    
+    updateUserProfile(name, email);
+    
+    document.getElementById("auth-screen").style.display = "none";
+    document.querySelector(".app-container").style.display = "flex";
+}
+
+function logoutUser() {
+    isLoggedIn = false;
+    localStorage.removeItem("vesta_logged_in");
+    localStorage.removeItem("vesta_user_name");
+    localStorage.removeItem("vesta_user_email");
+    
+    document.getElementById("auth-screen").style.display = "flex";
+    document.querySelector(".app-container").style.display = "none";
+}
+
+function updateUserProfile(name, email) {
+    document.getElementById("profile-name").textContent = name;
+    document.getElementById("profile-desc").textContent = email;
+    
+    // Initials calculation
+    const parts = name.split(" ");
+    let initials = parts[0]?.charAt(0) || "";
+    if (parts[1]) initials += parts[1].charAt(0);
+    document.getElementById("profile-initials").textContent = initials.toUpperCase() || "JD";
 }
