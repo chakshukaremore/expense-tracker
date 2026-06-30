@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import Dashboard from './components/Dashboard';
-import Scanner from './components/Scanner';
-import Budgets from './components/Budgets';
-import Reminders from './components/Reminders';
-import SplitBills from './components/SplitBills';
-import Reports from './components/Reports';
+import Layout from './components/Layout';
+import Toast from './components/Toast';
+import DashboardPage from './pages/DashboardPage';
+import ScannerPage from './pages/ScannerPage';
+import BudgetsPage from './pages/BudgetsPage';
+import RemindersPage from './pages/RemindersPage';
+import SplitBillsPage from './pages/SplitBillsPage';
+import ReportsPage from './pages/ReportsPage';
 
 const API_BASE_URL = 'http://localhost:8080/api';
 const DEFAULT_USER_ID = 1;
 
 function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
   const [userId] = useState(DEFAULT_USER_ID);
   
   // App States
@@ -22,10 +24,34 @@ function App() {
   const [groupMembers, setGroupMembers] = useState([]);
   const [ledgerBalances, setLedgerBalances] = useState({});
   const [notifications, setNotifications] = useState([]);
+  const [toasts, setToasts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [analytics, setAnalytics] = useState(null);
 
-  // Sync API or fallback to mock
+  // Dark Mode state initialization
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  // Dark Mode side-effects
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(prev => {
+      const newVal = !prev;
+      localStorage.setItem('theme', newVal ? 'dark' : 'light');
+      return newVal;
+    });
+  };
+
+  // Sync API or fallback to mock data
   useEffect(() => {
     fetchInitialData();
   }, [userId]);
@@ -138,157 +164,119 @@ function App() {
     "Rohan Das": 0.0
   });
 
+  // Notifications Drawer list helper
   const addNotification = (message, type = 'info') => {
     const newNotif = { id: Date.now(), message, type };
     setNotifications(prev => [newNotif, ...prev]);
-    setTimeout(() => {
-      setNotifications(prev => prev.filter(n => n.id !== newNotif.id));
-    }, 6000);
+    // Also trigger animated toast
+    addToast(message, type);
+  };
+
+  const clearNotification = (id) => {
+    setNotifications(prev => prev.filter(n => n.id !== id));
+  };
+
+  // Toast stack helpers
+  const addToast = (message, type = 'info') => {
+    const newToast = { id: Date.now(), message, type };
+    setToasts(prev => [...prev, newToast]);
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Premium Navbar */}
-      <header className="glass-panel mx-4 my-3 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-violet-600 to-cyan-500 flex items-center justify-center font-bold text-xl shadow-lg shadow-purple-900/40">V</div>
-          <div>
-            <h1 className="font-extrabold text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-cyan-400">VESTA AI</h1>
-            <p className="text-[10px] text-slate-400 tracking-widest uppercase font-semibold">Smart Finance Engine</p>
-          </div>
+    <Layout 
+      notifications={notifications} 
+      clearNotification={clearNotification}
+      isDarkMode={isDarkMode}
+      toggleDarkMode={toggleDarkMode}
+    >
+      {/* Central Routing */}
+      {loading ? (
+        <div className="flex flex-col items-center justify-center py-32 gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-amber-500 animate-spin"></div>
+          <p className="text-[var(--text-secondary)] text-sm font-semibold">Syncing Smart Engine Ledger...</p>
         </div>
+      ) : (
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          
+          <Route path="/dashboard" element={
+            <DashboardPage 
+              expenses={expenses}
+              budgets={budgets}
+              upcomingReminders={upcomingReminders}
+              ledgerBalances={ledgerBalances}
+              analytics={analytics}
+              isDarkMode={isDarkMode}
+            />
+          } />
+          
+          <Route path="/scanner" element={
+            <ScannerPage 
+              userId={userId}
+              fetchInitialData={fetchInitialData}
+              addNotification={addNotification}
+            />
+          } />
+          
+          <Route path="/budgets" element={
+            <BudgetsPage 
+              budgets={budgets}
+              userId={userId}
+              fetchInitialData={fetchInitialData}
+              addNotification={addNotification}
+            />
+          } />
+          
+          <Route path="/reminders" element={
+            <RemindersPage 
+              subscriptions={subscriptions}
+              upcomingReminders={upcomingReminders}
+              userId={userId}
+              fetchInitialData={fetchInitialData}
+              addNotification={addNotification}
+            />
+          } />
+          
+          <Route path="/split-bills" element={
+            <SplitBillsPage 
+              groupMembers={groupMembers}
+              ledgerBalances={ledgerBalances}
+              userId={userId}
+              fetchInitialData={fetchInitialData}
+              addNotification={addNotification}
+            />
+          } />
+          
+          <Route path="/reports" element={
+            <ReportsPage 
+              userId={userId}
+              expenses={expenses}
+              addNotification={addNotification}
+              isDarkMode={isDarkMode}
+            />
+          } />
 
-        {/* Tab Selection */}
-        <nav className="hidden md:flex items-center gap-2 bg-slate-900/60 p-1.5 rounded-xl border border-slate-800">
-          {[
-            { id: 'dashboard', label: '📊 Dashboard' },
-            { id: 'scanner', label: '📷 AI Scanner' },
-            { id: 'budgets', label: '💰 Budgets' },
-            { id: 'reminders', label: '🔔 Reminders' },
-            { id: 'splitbills', label: '👥 Split Bills' },
-            { id: 'reports', label: '📑 Reports' }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-lg font-medium text-sm transition-all ${
-                activeTab === tab.id 
-                  ? 'bg-gradient-to-r from-violet-600 to-cyan-600 text-white shadow-md' 
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-slate-950/80 px-3 py-1.5 rounded-lg border border-slate-800">
-            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
-            <span className="text-[11px] font-semibold text-slate-300">Live Client</span>
-          </div>
-          <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-sm">C</div>
-        </div>
-      </header>
-
-      {/* Notifications Drawer */}
-      {notifications.length > 0 && (
-        <div className="fixed top-24 right-4 z-50 flex flex-col gap-2 max-w-sm w-full px-4">
-          {notifications.map(n => (
-            <div key={n.id} className={`p-4 rounded-xl shadow-lg border text-sm flex items-center justify-between ${
-              n.type === 'error' ? 'bg-red-950/80 border-red-500 text-red-200' :
-              n.type === 'warning' ? 'bg-amber-950/80 border-amber-500 text-amber-200' :
-              'bg-slate-900/90 border-violet-500 text-violet-200'
-            }`}>
-              <span>{n.message}</span>
-              <button onClick={() => setNotifications(prev => prev.filter(x => x.id !== n.id))} className="text-xs ml-3 opacity-60 hover:opacity-100">✕</button>
-            </div>
-          ))}
-        </div>
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+        </Routes>
       )}
 
-      {/* Mobile Nav Header */}
-      <div className="flex md:hidden flex-wrap justify-center gap-2 px-4 mb-2">
-        {[
-          { id: 'dashboard', label: '📊 Dashboard' },
-          { id: 'scanner', label: '📷 Scanner' },
-          { id: 'budgets', label: '💰 Budgets' },
-          { id: 'reminders', label: '🔔 Reminders' },
-          { id: 'splitbills', label: '👥 Split' },
-          { id: 'reports', label: '📑 Reports' }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2.5 rounded-xl font-medium text-[10px] text-center transition-all min-w-[70px] ${
-              activeTab === tab.id 
-                ? 'bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-bold' 
-                : 'bg-slate-900/60 border border-slate-800 text-slate-400'
-            }`}
-          >
-            {tab.label}
-          </button>
+      {/* Floating Animated Toast Container */}
+      <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 max-w-sm w-full pointer-events-none">
+        {toasts.map(toast => (
+          <div key={toast.id} className="pointer-events-auto">
+            <Toast 
+              message={toast.message} 
+              type={toast.type} 
+              onClose={() => removeToast(toast.id)} 
+            />
+          </div>
         ))}
       </div>
-
-      {/* Main Content Area */}
-      <main className="flex-1 container mx-auto px-4 pb-12">
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-24 gap-4">
-            <div className="w-12 h-12 rounded-full border-4 border-slate-800 border-t-violet-500 animate-spin"></div>
-            <p className="text-slate-400 text-sm font-medium">Syncing Smart Engine Ledger...</p>
-          </div>
-        ) : activeTab === 'dashboard' ? (
-          <Dashboard 
-            expenses={expenses}
-            budgets={budgets}
-            subscriptions={subscriptions}
-            upcomingReminders={upcomingReminders}
-            ledgerBalances={ledgerBalances}
-            groupMembers={groupMembers}
-            analytics={analytics}
-            userId={userId}
-            fetchInitialData={fetchInitialData}
-            addNotification={addNotification}
-          />
-        ) : activeTab === 'scanner' ? (
-          <Scanner 
-            userId={userId}
-            fetchInitialData={fetchInitialData}
-            addNotification={addNotification}
-          />
-        ) : activeTab === 'budgets' ? (
-          <Budgets
-            budgets={budgets}
-            userId={userId}
-            fetchInitialData={fetchInitialData}
-            addNotification={addNotification}
-          />
-        ) : activeTab === 'reminders' ? (
-          <Reminders
-            subscriptions={subscriptions}
-            upcomingReminders={upcomingReminders}
-            userId={userId}
-            fetchInitialData={fetchInitialData}
-            addNotification={addNotification}
-          />
-        ) : activeTab === 'splitbills' ? (
-          <SplitBills
-            groupMembers={groupMembers}
-            ledgerBalances={ledgerBalances}
-            userId={userId}
-            fetchInitialData={fetchInitialData}
-            addNotification={addNotification}
-          />
-        ) : (
-          <Reports
-            userId={userId}
-            expenses={expenses}
-            addNotification={addNotification}
-          />
-        )}
-      </main>
-    </div>
+    </Layout>
   );
 }
 

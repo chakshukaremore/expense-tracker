@@ -2,97 +2,90 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --bg-primary: #faf8f5;
-  --bg-secondary: #ffffff;
-  --glass-border: rgba(217, 119, 6, 0.12);
-  --glow-cyan: rgba(217, 119, 6, 0.04);
-  --glow-purple: rgba(217, 119, 6, 0.04);
-  --glow-red: rgba(239, 68, 68, 0.1);
-  --text-primary: #1c1917;
-  --text-secondary: #57534e;
-  --accent-cyan: #eab308;
-  --accent-purple: #d97706;
-  --accent-green: #10b981;
-  --accent-red: #ef4444;
-  --accent-yellow: #f59e0b;
-}
+@layer base {
+  :root {
+    --bg-primary: #faf8f5;      /* Desert Sand Light */
+    --bg-secondary: #ffffff;    /* Card panel light */
+    --border-color: #f1ede4;    /* Sand border */
+    --text-primary: #1c1917;    /* Stone 900 text */
+    --text-secondary: #78716c;  /* Stone 500 text */
+    --accent-gold: #d97706;     /* Deep gold amber-600 */
+    --accent-gold-hover: #b45309;
+    --accent-blue: #0284c7;     /* Sky 600 */
+    --accent-green: #059669;    /* Emerald 600 */
+    --accent-red: #dc2626;      /* Red 600 */
+    --glow-color: rgba(217, 119, 6, 0.05);
+  }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  transition: all 0.2s ease-in-out;
+  .dark {
+    --bg-primary: #0f172a;      /* Slate 900 */
+    --bg-secondary: #1e293b;    /* Slate 800 */
+    --border-color: #334155;    /* Slate 700 */
+    --text-primary: #f8fafc;    /* Slate 50 text */
+    --text-secondary: #94a3b8;  /* Slate 400 text */
+    --accent-gold: #f59e0b;     /* Amber 500 */
+    --accent-gold-hover: #d97706;
+    --accent-blue: #38bdf8;     /* Sky 400 */
+    --accent-green: #34d399;    /* Emerald 400 */
+    --accent-red: #f87171;      /* Red 400 */
+    --glow-color: rgba(245, 158, 11, 0.15);
+  }
 }
 
 body {
-  margin: 0;
-  font-family: 'Outfit', sans-serif;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  background-image: none; /* Flat solid background */
-  background-attachment: fixed;
+  font-family: 'Outfit', sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Glassmorphism utility updated to light panel */
-.glass-panel {
-  background: var(--bg-secondary);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px 0 rgba(217, 119, 6, 0.04);
+/* Premium custom card helper */
+.card-panel {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.glass-panel:hover {
-  border-color: rgba(217, 119, 6, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(217, 119, 6, 0.06);
+.card-panel:hover {
+  border-color: var(--accent-gold);
+  box-shadow: 0 10px 15px -3px var(--glow-color), 0 4px 6px -4px var(--glow-color);
+  transform: translateY(-2px);
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
-  border-radius: 4px;
+  background: var(--border-color);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: var(--text-secondary);
 }
 
-/* Animations */
+/* Scan Animation for AI receipt scanning progress */
 @keyframes scan {
   0% { top: 0%; opacity: 0.8; }
   50% { top: 100%; opacity: 0.8; }
   100% { top: 0%; opacity: 0.8; }
 }
 
-@keyframes pulse-red {
-  0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
-  50% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.5); }
-}
-
-.animate-scan {
-  position: relative;
-}
-.animate-scan::after {
+.animate-scan-line::after {
   content: '';
   position: absolute;
   width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--accent-gold), transparent);
   left: 0;
-  animation: scan 2.5s infinite linear;
-  box-shadow: 0 0 12px var(--accent-cyan);
-}
-
-.pulse-error {
-  animation: pulse-red 2s infinite ease-in-out;
+  animation: scan 3s infinite linear;
+  box-shadow: 0 0 10px var(--accent-gold);
 }
